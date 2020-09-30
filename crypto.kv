@@ -1,0 +1,286 @@
+#:import Factory kivy.factory.Factory
+#: import FadeTransition kivy.uix.screenmanager.FadeTransition
+
+<SFinish@Popup>:
+    title: ""
+    separator_color: 0, 0, 0, 0
+    BoxLayout:
+        padding: 10
+        spacing: 10
+        orientation: "vertical"
+        Label:
+            text:  "Your Public Key is "
+        TextInput:
+            id: textinput
+            padding_x:
+                [self.center[0] - self._get_text_width(max(self._lines, key=len), self.tab_width, self._label_cached) / 2.0,
+                0] if self.text else [self.center[0], 0]
+        # top, bottom
+            padding_y: [self.height / 2.0 - (self.line_height / 2.0) * len(self._lines), 0]
+            text: str(app.output.CustKey())
+            readonly: True
+            use_bubble: True
+            background_color: (0.8823529411764706, 0.8470588235294118, 0.7254901960784313, 1) if self.focus else (0.8823529411764706, 0.8470588235294118, 0.7254901960784313, 1)
+        # Label:
+        #     text:  str(app.output.CustKey())
+        #     use_bubble: True
+        Button:
+            text: "Dismiss"
+            size_hint_y: .2
+            on_release:
+                root.dismiss()
+                app.root.current = "Home"
+
+<RWin@Popup>:
+    title: ""
+    separator_color: 0, 0, 0, 0
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            text:  "Success"
+        Button:
+            text: "Dismiss"
+            size_hint_y: .2
+            on_release:
+                root.dismiss()
+                app.root.current = "Home"
+
+<RDefeat@Popup>:
+    title: ""
+    separator_color: 0, 0, 0, 0
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            text:  "ERROR"
+        Button:
+            text: "Dismiss"
+            size_hint_y: .2
+            on_release:
+                root.dismiss()
+                app.root.current = "Home"
+
+
+<PopSave@Popup>:
+    title: "Save Output File"
+    auto_dismiss: False
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserIconView:
+            id: filechooser
+            on_selection: text_input.text = self.selection and self.selection[0] or ''
+        TextInput:
+            id: text_input
+            size_hint_y: .1
+            height: 30
+            multiline: False
+        BoxLayout:
+            size_hint_y: .2
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release:
+                    root.dismiss()
+
+            Button:
+                text: "Save"
+                on_release:
+                    app.ListView_.Save(filechooser.path, text_input.text)
+                    root.dismiss()
+
+<PopLoad@Popup>:
+    title: "Load The Messages"
+    auto_dismiss: False
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserIconView:
+            id: filechooser
+            multiselect: True
+        BoxLayout:
+            size_hint_y: .2
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release:
+                    root.dismiss()
+
+            Button:
+                text: "Load"
+                on_release:
+                    app.ListView_.Load(filechooser.selection)
+                    root.dismiss()
+
+<ImgLoad@Popup>:
+    title: "Select Carrier Image"
+    auto_dismiss: False
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+            id: filechooser
+        BoxLayout:
+            size_hint_y: .2
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release:
+                    root.dismiss()
+
+            Button:
+                text: "Load"
+                on_release:
+                    app.ListView_.Image_(filechooser.selection)
+                    root.dismiss()
+
+<RImgLoad@Popup>:
+    title: "Select Carrier Image"
+    auto_dismiss: False
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+            id: filechooser
+        BoxLayout:
+            size_hint_y: .2
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release:
+                    root.dismiss()
+
+            Button:
+                text: "Load"
+                on_release:
+                    app.ListView_.RImage_(filechooser.selection)
+                    root.dismiss()
+
+
+<Adv@Popup>:
+    title: "Advanced Options"
+    auto_dismiss: False
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        TextInput:
+            size_hint_y: .2
+            id: Secret
+            hint_text: "Secret Value"
+
+        Label:
+            size_hint_y: .1
+            text: "Public Values"
+        TextInput:
+            size_hint_y: .2
+            id: X_C
+            hint_text: "X Coordinate"
+        TextInput:
+            size_hint_y: .2
+            id: Y_C
+            hint_text: "Y Coordinate"
+        TextInput:
+            size_hint_y: .2
+            id: Y_ID
+            hint_text: "Your ID"
+        TextInput:
+            size_hint_y: .2
+            id: R_ID
+            hint_text: "Receiver ID"
+        BoxLayout:
+            size_hint_y: .2
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release:
+                    app.Var_.VEntry(Secret, X_C, Y_C, Y_ID, R_ID)
+                    root.dismiss()
+
+            Button:
+                text: "Submit"
+                on_release:
+                    app.Var_.VEntry(Secret, X_C, Y_C, Y_ID, R_ID)
+                    root.dismiss()
+
+SManagement:
+    transition: FadeTransition()
+    Home_:
+    Send_:
+    Receive_:
+    ListView_:
+
+<Home_>:
+    name: "Home"
+    BoxLayout:
+        orientation: "vertical"
+        Button:
+		    on_release: app.root.current = "send"
+		    text: "Send"
+        Button:
+		    on_release: app.root.current = "receive"
+		    text: "Receive"
+
+<Send_>:
+    name: "send"
+    BoxLayout:
+        orientation: "vertical"
+        BoxLayout:
+            orientation: "horizontal"
+            Button:
+                pos_hint: {"x": 0, "top": 1}
+                on_release: app.root.current = "Home"
+                text: "Back Home"
+            Button:
+                pos_hint: {"x": 0, "top": 1}
+                on_release: app.root.current = "receive"
+                text: " Go to Receive"
+        Button:
+            text: "choose Messages"
+            on_release: Factory.PopLoad().open()
+
+        Button:
+            text: "Advanced Options"
+            on_release: Factory.Adv().open()
+        Button:
+            text: "Output File Save Location"
+            on_release: Factory.PopSave().open()
+        Button:
+            id: Execute
+            text: "Execute"
+            on_release:
+                root.Exsend_()
+                Factory.SFinish().open()
+
+<Receive_>:
+    name: "receive"
+    BoxLayout:
+        orientation: "vertical"
+        BoxLayout:
+            orientation: "horizontal"
+            Button:
+                pos_hint: {"x": 0, "top": 1}
+                on_release: app.root.current = "Home"
+                text: "Back Home"
+            Button:
+                pos_hint: {"x": 0, "top": 1}
+                on_release: app.root.current = "send"
+                text: " Go to Send"
+        Button:
+            text: "choose Messages"
+            on_release: Factory.RImgLoad().open()
+
+        Button:
+            text: "Advanced Options"
+            on_release: Factory.Adv().open()
+        Button:
+            text: "Output File Save Location"
+            on_release: Factory.PopSave().open()
+        Button:
+            id: Execute
+            text: "Execute"
+            on_release:
+                root.Exreceive_()
